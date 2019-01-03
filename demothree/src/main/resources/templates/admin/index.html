@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>方智中立客户端</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <% include("/common/header_css.html"){} %>
+    <style>
+        #navTabs i.fa-close {
+            font-size: 16px;
+            color: lightcoral;
+        }
+        sup.icon {
+            position: relative;
+            left: -3px;
+        }
+        #actions {
+            box-sizing: border-box;
+            display: none;
+            z-index: 100;
+            position: absolute;
+            background-color: lightcyan;
+            border-radius: 5px;
+            left: 500px;
+        }
+        #actions > li {
+            position: relative;
+            left: -20px;
+            list-style-type: none;
+        }
+
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    <!-- Main Header -->
+    <header class="main-header">
+
+        <!-- Logo -->
+        <a href="${basePath}/admin/index" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>方</b></span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>方智中立</b>客户端</span>
+        </a>
+
+        <!-- Header Navbar -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <!-- Navbar Right Menu -->
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+
+                    <!-- User Account Menu -->
+                    <li class="dropdown user user-menu">
+                        <!-- Menu Toggle Button -->
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <!-- The user image in the navbar-->
+                            <img src="${basePath}/thirdpart/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                            <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                            <span class="hidden-xs">${session.currentUser.nickname!"游客"}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- The user image in the menu -->
+                            <li class="user-header">
+                                <img src="${basePath}/thirdpart/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+
+                                <p>
+                                    ${session.currentUser.nickname!"游客"} - 网页开发者
+                                    <small>从2018年10起</small>
+                                </p>
+                            </li>
+                            <!-- Menu Body -->
+                            <li class="user-body">
+                                <div class="row">
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">关注者</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">同事</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">朋友</a>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" class="btn btn-default btn-flat">个人简介</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="${basePath}/admin/logout" class="btn btn-default btn-flat">登出</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-gears"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="${basePath}/admin/login">切换账号</a></li>
+                            <li><a href="#">修改密码</a></li>
+                            <li><a href="#">其他</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+
+            <!-- Sidebar Menu -->
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header text-center">菜单栏</li>
+                <!-- 默认只递归三级菜单 -->
+                <% for(menu in session.currentUser.menus!) {
+                    if(menu.subMenus.~size == 0) { %>
+                        <li><a href="javascript:openTab('${menu.name}','${menu.url}');"><i class="fa fa-${menu.icon}"></i> <span>${menu.name}</span></a></li>
+                    <%}else{ %>
+                        <li class="treeview">
+                        <a href="#"><i class="fa fa-${menu.icon}"></i> <span>${menu.name}</span>
+                            <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                        </a>
+                        <ul class="treeview-menu">
+                        <% for(sub1 in menu.subMenus!) {
+                            if(sub1.subMenus.~size == 0) { %>
+                                <li><a href="javascript:openTab('${sub1.name}','${sub1.url}');"><i class="fa fa-${sub1.icon}"></i> <span>${sub1.name}</span></a></li>
+                            <% }else{ %>
+                                <li class="treeview">
+                                <a href="#"><i class="fa fa-${sub1.icon}"></i> <span>${sub1.name}</span>
+                                    <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <% for(sub2 in sub1.subMenus!) { %>
+                                        <li><a href="javascript:openTab('${sub2.name}','${sub2.url}');"><i class="fa fa-${sub2.icon}"></i> <span>${sub2.name}</span></a></li>
+                                    <% } %>
+                                </ul></li>
+                             <% }
+                        }
+                    } %></ul></li>
+                <% } %>
+            </ul>
+
+        <!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <ul id="actions" class="action-menu">
+            <li><a href="javascript:refreshTheTab();">刷新</a></li>
+            <li><a href="javascript:closeOtherTabs();">关闭其他</a></li>
+            <li><a href="javascript:closeAllTabs();">关闭所有</a></li>
+        </ul>
+        <ul id="navTabs" class="nav nav-tabs">
+            <li id="menu-li-1" class="active" oncontextmenu="onContextMenu(event,-1)">
+                <a data-toggle="tab" href="#menu-1">首页 </a>
+            </li>
+        </ul>
+
+        <div id="tabContents" class="tab-content">
+            <div id="menu-1" class="tab-pane  in active">
+                <iframe id="tabFrame-1" src="${basePath}/admin/home" style="width:100%" frameborder="0" onload="resizeIframe(this)" ></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <!-- To the right -->
+        <div class="pull-right hidden-xs">
+            everything you want
+        </div>
+        <!-- Default to the left -->
+        <strong>版权 &copy; 2018 <a href="#">方智中立</a>.</strong> 所有权利保留.
+    </footer>
+
+</div>
+<% include("/common/footer_js.html"){} %>
+<script>
+    $(function () {
+        $("body").click(function () {
+            $("#actions").hide();
+        });
+    });
+    let tabMap = {
+        _Index: 0,
+        _currentIndex:0,
+        _hisIndexes:[],
+        addAndGet: function() {
+            return ++this._Index;
+        },
+        reset: function() {
+            this._Index = 0;
+        },
+        get: function(key) {
+            return this[key] || null;
+        },
+        set: function(key, value) {
+            this[key] = value;
+        },
+    };
+
+    function onContextMenu(e, index) {
+        e.preventDefault();
+        tabMap._currentIndex = index;
+        let actDiv = $("#actions");
+        actDiv.css({left:e.pageX,top:e.pageY});
+        actDiv.show();
+    }
+
+    function closeAllTabs() {
+        removeTabsButHome(tabMap._currentIndex,true);
+        $("#actions").hide();
+    }
+    function closeOtherTabs() {
+        removeTabsButHome(tabMap._currentIndex,false);
+        $("#actions").hide();
+    }
+
+    function refreshTheTab() {
+        let iframe = document.getElementById("tabFrame" + tabMap._currentIndex);
+        iframe.contentWindow.location.reload(true);
+        $("#actions").hide();
+    }
+
+    function openTab(name, url) {
+        let index = tabMap.get(url);
+        if(index === null) {
+            index = tabMap.addAndGet();
+            $("#navTabs").append(createNavLi(index,name));
+            $("#tabContents").append(createTabDiv(index,url));
+            tabMap.set(url,index);
+            tabMap.set("#" + index, url);
+            tabMap._hisIndexes.push(index);
+        }
+        hideAllTabMenus();
+        showTabByIndex(index);
+    }
+
+    function createNavLi(index, name) {
+        return "<li id='menu-li" + index + "' oncontextmenu='onContextMenu(event," + index + ")'>" +
+            "<a data-toggle='tab' href='#menu" + index + "'>" + name +" <sup class='icon'>" +
+            "<i class='fa fa-close' onclick='removeTabByIndex(" + index + ")'></i></sup></a></li>";
+    }
+
+    function createTabDiv(index, url) {
+        return "<div id='menu" + index + "' class='tab-pane in active'>"
+            + "<iframe id='tabFrame" + index + "' src='" + url + "' style='width:100%' frameborder='0' "
+            + "onload='resizeIframe(this)' ></iframe></div>";
+    }
+
+    function showTabByIndex(index) {
+        $("#menu-li" + index).addClass("active");
+        $("#menu" + index).addClass("in active");
+    }
+
+    function hideTabByIndex(index) {
+        $("#menu-li" + index).removeClass("active");
+        $("#menu" + index).removeClass("in active");
+    }
+
+    function hideAllTabMenus() {
+        $("#navTabs > li.active").removeClass("active");
+        $("#tabContents > div.active").removeClass("in active");
+    }
+
+    function removeTabByIndex(index) {
+        let menuLi = $("#menu-li" + index);
+        let menu = $("#menu" + index);
+        let isCurrent = menuLi.hasClass("active");
+        let menuLiSib = menuLi.next();
+        let menuSib = menu.next();
+        if(isCurrent) {
+            if(menuLiSib.length === 0) menuLiSib = menuLi.prev();
+            if(menuSib.length === 0) menuSib = menu.prev();
+            menuLiSib.addClass("active");
+            menuSib.addClass("in active");
+        }
+        menuLi.remove()
+        menu.remove();
+        let url = tabMap.get("#" + index);
+        delete tabMap[url];
+        delete tabMap["#" + index];
+    }
+
+    function removeTabsButHome(index,isAll) {
+        let menuLi = $("#menu-li" + index);
+        let menu = $("#menu" + index);
+        menuLi.siblings().each(function(ind,element){
+            if(index < 0 || ind > 0) element.remove();
+        })
+        menu.siblings().each(function(ind2,element){
+            if(index < 0  || ind2 > 0) element.remove();
+        })
+        deleteOtherTabsByIndex(index);
+        if(isAll) {
+            if(index > 0) removeTabByIndex(index);
+            showTabByIndex(-1);
+        }else{
+            if(index > 0) hideTabByIndex(-1);
+            showTabByIndex(index);
+        }
+
+    }
+
+    function deleteOtherTabsByIndex(index) {
+        tabMap._hisIndexes.forEach((item) => {
+            if(index !== item) {
+                let url = tabMap.get("#" + item);
+                delete tabMap[url];
+                delete tabMap["#" + item];
+            }
+        })
+    }
+
+    /**
+     * 加载完成后自动调整iframe高度
+     */
+    function resizeIframe(obj) {
+        obj.style.height = (window.innerHeight-150) + 'px';
+    }
+
+    /**
+     * 随着窗口缩放自动调整iframe高度
+     */
+    window.onresize = function () {
+        $("iframe").css("height",(window.innerHeight-150) + 'px');
+    }
+</script>
+</body>
+</html>

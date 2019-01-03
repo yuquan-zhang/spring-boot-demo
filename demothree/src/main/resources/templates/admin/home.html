@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>方智中立客户端</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <% include("/common/header_css.html"){} %>
+</head>
+<body >
+<div class="container-fluid">
+    <br/>
+    <input type="checkbox" id="selectAll">选中所有</input>
+    <table id="example" class="table table-bordered table-striped" width="100%"></table>
+</div>
+<% include("/common/footer_js.html"){} %>
+<script>
+
+    let dt1;
+    $(document).ready(function() {
+        var editor = new $.fn.dataTable.Editor( {
+            ajax:  '${ctxPath}/admin/menu/all',
+            table: '#example',
+            idSrc:  'id',
+            i18n: i18n,
+            fields: [
+                { label: '菜单名称', name: 'name' },
+                { label: '菜单图标',  name: 'icon'  },
+                { label: '菜单链接', name: 'url' },
+                { label: '按钮权限',  name: 'permission'  },
+                { label: '菜单类型', name: 'type' },
+                { label: '是否显示',  name: 'canShow'  },
+            ]
+        } );
+        dt1 = $('#example').MyDataTable( {
+            ajax: {
+                "url": "${ctxPath}/admin/menu/all",
+            },
+            dom: 'Bfrtip',
+            columns: [
+                { data: "name",title:"菜单名称",name:"test" },
+                { data: "icon",title:"菜单图标" },
+                { data: "url",title:"菜单链接" },
+                { data: "permission" ,title:"按钮权限" },
+                { data: "type" ,title:"菜单类型" },
+                { data: "canShow" ,title:"是否显示" },
+            ],
+            columnDefs: [
+                {
+                    //   指定第一列，从0开始，0表示第一列，1表示第二列……
+                    targets: 5,
+                    render: function(data, type, row, meta) {
+                        return data ? "按钮" : "菜单";
+                    }
+                },
+                {
+                    targets:6,
+                    render: function(data, type, row, meta) {
+                        return data ? "是" : "否";
+                    },
+                    orderable:false,
+                }
+            ],
+            buttons: [
+                { extend: 'create', editor: editor },
+                { extend: 'edit',   editor: editor },
+                { extend: 'remove', editor: editor }
+            ]
+        });
+    } );
+
+    $("#selectAll").on("click", function(e) {
+        if ($(this).is(":checked")) {
+            dt1.rows().select();
+        } else {
+            dt1.rows().deselect();
+        }
+        console.log(dt1.rows('.selected').data().map(item => item.id));
+    });
+</script>
+</body>
+</html>

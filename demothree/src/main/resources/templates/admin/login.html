@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>登陆</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <% include("/common/header_css.html"){} %>
+</head>
+<body class="hold-transition login-page bg-aqua">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="${basePath}/admin/index"><b>方智中立</b>客户端</a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body" style="border-radius: 5px;">
+            <p class="login-box-msg text-danger">${errorMsg!}</p>
+
+            <form action="${basePath}/admin/login" method="post">
+                <div class="form-group has-feedback">
+                    <input name="username" value="${username!}" type="phone" class="form-control" placeholder="手机号码">
+                    <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input name="password" value="${password!}" type="password" class="form-control" placeholder="密码">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="checkbox">
+                            <label>
+                                <input name="rememberMe" value="true" type="checkbox"> 记住我
+                            </label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-xs-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">登陆</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+            <!-- /.social-auth-links -->
+
+            <a href="#">我忘记了密码</a><br>
+            <a href="register.html" class="text-center">注册新账号</a>
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+    <% include("/common/footer_js.html"){} %>
+    <script>
+        /* 当登出之后，禁用页面后退功能 */
+        if("${shiro.isGuest()}" === "true") {
+            history.pushState(null, null, document.URL);
+            window.addEventListener('popstate', function () {
+                history.pushState(null, null, document.URL);
+            });
+        }
+        $(function () {
+            /* 当登陆页面不是最顶级页面时，将最顶级页面设为登陆页面 */
+            if(window.top.location.href !== window.location.href) {
+                window.top.location.href = window.location.href;
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>方智中立客户端</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <% include("/common/header_css.html"){} %>
+</head>
+<body>
+    <div class="container-fluid">
+        <form id="command" class="form-horizontal" action="${ctxPath}/admin/user/saveOrUpdate">
+            <div class="box-body">
+                <input type="hidden" id="id" name="id" value="${user.id}" />
+                <input type="hidden" name="salt" value="${user.salt}" />
+                <input type="hidden" name="created" value="${user.created,dateFormat='yyyy-MM-dd HH:mm:ss'}" />
+                <input type="hidden" name="updated" value="${user.updated,dateFormat='yyyy-MM-dd HH:mm:ss'}" />
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">用户名</label>
+
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="username" name="username" value="${user.username}"
+                               required="required" placeholder="请输入用户名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="nickname" class="col-sm-2 control-label">昵称</label>
+
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="nickname" name="nickname" value="${user.nickname}"
+                               required="required" placeholder="请输入昵称">
+                    </div>
+                </div>
+                <div class="form-group" style="display: ${user.id == null ? 'block' : 'none'}">
+                    <label for="password" class="col-sm-2 control-label">密码</label>
+
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="password" name="password" value="${user.password}"
+                               ${user.id == null ? 'required="required"' : ''}  placeholder="请输入密码" >
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer text-center">
+                <button type="button" class="btn btn-default cancel-layer">取消</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="submit" class="btn btn-info">保存</button>
+            </div>
+        </form>
+    </div>
+    <% include("/common/footer_js.html"){} %>
+    <script>
+        $("#command").validate({
+            rules: {
+                username: {
+                    required: true,
+                    minlength: 2,
+                    remote: {
+                        url: "${ctxPath}/admin/user/checkUsernameUnique",
+                        type: "post",
+                        data: {
+                            username: function() {
+                                return $("#username").val();
+                            },
+                            id: function() {
+                                return $("#id").val();
+                            }
+                        }
+                    }
+                },
+                nickname: {
+                    required: true,
+                    minlength: 2,
+                },
+                password: {
+                    required: true,
+                    minlength: 5
+                }
+            },
+            messages: {
+                username: {
+                    required: "请输入用户名",
+                    minlength: "用户名必需由两个字母组成",
+                    remote: "用户名已存在"
+                },
+                nickname: {
+                    required: "请输入昵称",
+                    minlength: "用户名必需由两个字符组成",
+                },
+                password: {
+                    required: "请输入密码",
+                    minlength: "密码长度不能小于 5 个字符"
+                }
+            },
+            submitHandler: function (form) {
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    url: $(form).attr("action"),
+                    type: "post",
+                    data: JSON.stringify($(form).uiSerializeForm()),
+                    success: function (data) {
+                        console.log(data);
+                        if (data.success) {
+                            layer.alert(data.data, function (ind) {
+                                layer.close(ind);
+                                //关闭弹出层
+                                closeLayerIframe();
+                            })
+                        } else {
+                            layer.alert(data.data);
+                        }
+                    }
+                });
+                return false;
+            },
+        });
+    </script>
+</body>
+</html>

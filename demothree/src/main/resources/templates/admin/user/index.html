@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>方智中立客户端</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <% include("/common/header_css.html"){} %>
+</head>
+<body>
+    <div class="container-fluid">
+        <table id="example" class="table table-bordered table-striped" width="100%"></table>
+    </div>
+
+    <% include("/common/footer_js.html"){} %>
+    <script>
+        var dt1;
+        $(document).ready(function() {
+            dt1 = $('#example').MyDataTable( {
+                ajax: {
+                    "url": "${ctxPath}/admin/user/all",
+                },
+                buttons:[
+                    {
+                        extend: 'copy',
+                        text: '复制到剪贴板'
+                    },
+                    {
+                        extend: 'excel',
+                        text: '导出EXCEL'
+                    },
+                    {
+                        extend: 'print',
+                        text: '打印'
+                    },
+                    {
+                        text: '新增',
+                        className:'btn btn-info',
+                        action: function (e, dt, node, config ) {
+                            saveOrUpdate();
+                        }
+                    }
+                ],
+                columns: [
+                    { data: "username",title:"用户名" },
+                    { data: "nickname",title:"昵称" },
+                    { data: "password",title:"密码" },
+                    { data: "salt" ,title:"盐" },
+                    {
+                        data: "created" ,
+                        title:"创建时间",
+                        render: function(data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        data: "updated" ,
+                        title:"更新时间" ,
+                        render: function(data, type, row, meta) {
+                            if(data == null) return "";
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        },
+                        orderable:false
+                    },
+                    {
+                        data: "action",
+                        title: "操作",
+                        render: function(data, type, row, meta) {
+                            return '<button type="submit" onclick="saveOrUpdate(' + row.id + ')" class="btn btn-primary">编辑</button>';
+                        },
+                        orderable:false
+                    }
+                ]
+            });
+        } );
+        function saveOrUpdate(id) {
+            var title = isNull(id) ? "新增用户" : "修改用户";
+            var content = '${ctxPath}/admin/user/addOrEdit';
+            if(id) content += "?id=" + id;
+            layer.open({
+                type: 2,
+                title: title,
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['80%', '80%'],
+                content: content,
+                end: function(index,layero) {
+                    dt1.ajax.reload(null, false);//第一个参数是回调函数，第二个参数控制是否重新分页
+                }
+            });
+        }
+    </script>
+</body>
+</html>

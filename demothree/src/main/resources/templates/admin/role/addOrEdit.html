@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>方智中立客户端</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <% include("/common/header_css.html"){} %>
+</head>
+<body>
+    <div class="container-fluid">
+        <form id="command" class="form-horizontal" action="${ctxPath}/admin/role/saveOrUpdate">
+            <div class="box-body">
+                <input type="hidden" id="id" name="id" value="${role.id}" />
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label">角色名</label>
+
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="name" name="name" value="${role.name}"
+                               required="required" placeholder="请输入角色名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label">绑定菜单</label>
+                    <div class="col-sm-9">
+                        <ul id="treeTable" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer text-center">
+                <button type="button" class="btn btn-default cancel-layer">取消</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="submit" class="btn btn-info">保存</button>
+            </div>
+        </form>
+    </div>
+    <% include("/common/footer_js.html"){} %>
+    <script>
+        var setting = {
+            check: {
+                enable: true,
+                chkboxType: { "Y": "s", "N": "s" }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                onCheck: bind
+            }
+        };
+
+
+        $(document).ready(function (){
+            initMenuTree();
+        });
+
+        function initMenuTree(){
+            var zNodes = [];
+            $.ajax({
+                url: '${basePath}/admin/menu/fetchMenuTree',
+                data:{roleId:$("#id").val()},
+                type: "post",
+                async:false,
+                dataType: "json",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = {};
+                        $.extend(obj, data[i]);
+                        zNodes.push(obj);
+                    }
+                }
+            });
+            $.fn.zTree.init($("#treeTable"), setting, zNodes);
+        }
+
+        function bind(){
+            var zTree = $.fn.zTree.getZTreeObj("treeTable");
+            var nodes = zTree.getCheckedNodes(true);
+            var menuIds = [];
+            for(var i = 0; i < nodes.length; i++) {
+                menuIds.push(nodes[i].id);
+            }
+            return menuIds;
+        }
+
+        $("#command").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    remote: {
+                        url: "${ctxPath}/admin/role/checkNameUnique",
+                        type: "post",
+                        data: {
+                            username: function() {
+                                return $("#name").val();
+                            },
+                            id: function() {
+                                return $("#id").val();
+                            }
+                        }
+                    }
+                }
+            },
+            messages: {
+                name: {
+                    required: "请输入角色名",
+                    minlength: "角色名必需由两个字母组成",
+                    remote: "角色名已存在"
+                }
+            },
+            submitHandler: function (form) {
+                var obj = $(form).uiSerializeForm();
+                obj.menuIds = bind();
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    url: $(form).attr("action"),
+                    type: "post",
+                    data: JSON.stringify(obj),
+                    success: function (data) {
+                        console.log(data);
+                        if (data.success) {
+                            layer.alert(data.data, function (ind) {
+                                layer.close(ind);
+                                //关闭弹出层
+                                closeLayerIframe();
+                            })
+                        } else {
+                            layer.alert(data.data);
+                        }
+                    }
+                });
+                return false;
+            },
+        });
+    </script>
+</body>
+</html>
