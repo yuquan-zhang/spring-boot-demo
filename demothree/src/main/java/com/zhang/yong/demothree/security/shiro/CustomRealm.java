@@ -66,7 +66,7 @@ public class CustomRealm extends AuthorizingRealm {
         }
         //查询用户的角色和权限存到SimpleAuthenticationInfo中，这样在其它地方
         //SecurityUtils.getSubject().getPrincipal()就能拿出用户的所有信息，包括角色和权限
-        Set<String> roles = roleService.getRolesByUserId(user.getId());
+        Set<String> roles = roleService.getRoleNamesByUserId(user.getId());
         List<Menu> menus = menuService.getMenusByUserId(user.getId());
         List<Menu> allMenus = menuService.getByType(0);
         List<Menu> resultMenus = new ArrayList<>();

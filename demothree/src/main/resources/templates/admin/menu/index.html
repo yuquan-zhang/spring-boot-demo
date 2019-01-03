@@ -33,7 +33,7 @@
                         <td>${menu.canShow ? "是" : "否"}</td>
                         <td>
                             <button class="btn btn-primary" onclick="saveOrUpdate(${menu.id})">编辑</button>
-                            <button class="btn btn-danger">删除</button>
+                            <button class="btn btn-danger" onclick="deleteMenu(${menu.id},this)">删除</button>
                         </td>
                     </tr>
                     <% } %>
@@ -64,6 +64,38 @@
 
                     }
                 });
+            }
+
+            function deleteMenu(id,th) {
+                if(isNull(id)) return;
+                layer.confirm('确定要删除吗？', {
+                    icon: 3,
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        dataType: "json",
+                        url: '${ctxPath}/admin/menu/delete',
+                        type: "post",
+                        data: {
+                            id:id
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            if (data.success) {
+                                layer.alert(data.data,{icon: 1}, function (ind) {
+                                    layer.close(ind);
+                                    //隐藏已删除的菜单行
+                                    $(th).parent().parent().remove();
+                                })
+                            } else {
+                                layer.alert(data.data,{icon: 2});
+                            }
+                        }
+                    });
+                });
+
             }
         </script>
 

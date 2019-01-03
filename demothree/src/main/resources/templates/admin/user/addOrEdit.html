@@ -31,12 +31,23 @@
                                required="required" placeholder="请输入昵称">
                     </div>
                 </div>
-                <div class="form-group" style="display: ${user.id == null ? 'block' : 'none'}">
+                <div class="form-group" style="display: ${isEmpty(user.id) ? 'block' : 'none'}">
                     <label for="password" class="col-sm-2 control-label">密码</label>
 
                     <div class="col-sm-9">
                         <input type="password" class="form-control" id="password" name="password" value="${user.password}"
-                               ${user.id == null ? 'required="required"' : ''}  placeholder="请输入密码" >
+                               ${isEmpty(user.id) ? 'required="required"' : ''}  placeholder="请输入密码" >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="roleIds" class="col-sm-2 control-label">绑定角色</label>
+                    <div class="col-sm-9">
+                        <select id="roleIds" name="roleIds" class="form-control select2" multiple="multiple" data-placeholder="选择角色"
+                                style="width: 100%;">
+                            <% for(role in allRoles) { %>
+                            <option value="${role.id}" ${array.contain(bindRoles!,role)! ? 'selected' : ''}>${role.name}</option>
+                            <% } %>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -49,6 +60,9 @@
     </div>
     <% include("/common/footer_js.html"){} %>
     <script>
+        $(function () {
+            $('.select2').select2();
+        });
         $("#command").validate({
             rules: {
                 username: {
@@ -79,7 +93,7 @@
             messages: {
                 username: {
                     required: "请输入用户名",
-                    minlength: "用户名必需由两个字母组成",
+                    minlength: "用户名必需由两个字符组成",
                     remote: "用户名已存在"
                 },
                 nickname: {
@@ -92,6 +106,8 @@
                 }
             },
             submitHandler: function (form) {
+                var obj = $(form).uiSerializeForm();
+                obj.roleIds = obj.roleIds.split(",");
                 $.ajax({
                     async: false,
                     cache: false,
@@ -99,17 +115,17 @@
                     contentType: "application/json; charset=utf-8",
                     url: $(form).attr("action"),
                     type: "post",
-                    data: JSON.stringify($(form).uiSerializeForm()),
+                    data: JSON.stringify(obj),
                     success: function (data) {
                         console.log(data);
                         if (data.success) {
-                            layer.alert(data.data, function (ind) {
+                            layer.alert(data.data,{icon: 1}, function (ind) {
                                 layer.close(ind);
                                 //关闭弹出层
                                 closeLayerIframe();
                             })
                         } else {
-                            layer.alert(data.data);
+                            layer.alert(data.data,{icon: 2});
                         }
                     }
                 });

@@ -26,5 +26,11 @@
         <!-- /.error-page -->
     </section>
     <!-- /.content -->
+    <script>
+        /* 当登陆页面不是最顶级页面时，将最顶级页面设为登陆页面 */
+        if(window.top.location.href !== window.location.href) {
+            window.top.location.href = window.location.href;
+        }
+    </script>
 </body>
 </html>

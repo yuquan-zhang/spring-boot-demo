@@ -2,10 +2,12 @@ package com.zhang.yong.demothree.module.admin.service;
 
 import com.zhang.yong.demothree.module.admin.bean.Menu;
 import com.zhang.yong.demothree.module.admin.dao.MenuMapper;
+import com.zhang.yong.demothree.security.exception.MessageException;
 import com.zhang.yong.demothree.util.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -152,6 +154,7 @@ public class MenuService {
         }
     }
 
+    @Transactional
     public void saveOrUpdate(Menu menu) {
         if(null == menu.getParentId()) {
             menu.setParentId(0L);
@@ -161,5 +164,15 @@ public class MenuService {
         }else{
             menuMapper.update(menu);
         }
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        List<Menu> subMenus = menuMapper.selectByParentId(id);
+        if(CollectionUtil.notEmpty(subMenus)) {
+            throw new MessageException("该菜单下还有子菜单，禁止删除！");
+        }
+        menuMapper.delete(id);
+        menuMapper.deleteRoleMenu(id);
     }
 }

@@ -36,7 +36,7 @@
                     },
                     {
                         text: '新增',
-                        className:'btn btn-info',
+                        className:'btn btn-info ${shiro.hasPermission("admin:user:edit") ? "" : "hidden"}',
                         action: function (e, dt, node, config ) {
                             saveOrUpdate();
                         }
@@ -67,7 +67,7 @@
                         data: "action",
                         title: "操作",
                         render: function(data, type, row, meta) {
-                            return '<button type="submit" onclick="saveOrUpdate(' + row.id + ')" class="btn btn-primary">编辑</button>';
+                            return '<#PermissionTag tagType="button" permissionKey="admin:user:edit" type="submit" onclick="saveOrUpdate(' + row.id + ')" class="btn btn-primary">编辑</#PermissionTag>';
                         },
                         orderable:false
                     }

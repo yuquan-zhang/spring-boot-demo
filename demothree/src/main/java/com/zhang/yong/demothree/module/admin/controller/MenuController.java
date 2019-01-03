@@ -10,6 +10,7 @@ import com.zhang.yong.demothree.util.PageUtil;
 import com.zhang.yong.demothree.vo.JsonObject;
 import com.zhang.yong.demothree.vo.PageObject;
 import com.zhang.yong.demothree.vo.PageParam;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,7 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
+    @RequiresPermissions("admin:menu:view")
     @GetMapping("/all")
     @ResponseBody
     public PageObject getAll(@RequestParam Map<String,Object> map) {
@@ -36,12 +38,14 @@ public class MenuController {
         return PageObject.page(pageInfo,pageParam.getDraw());
     }
 
+    @RequiresPermissions("admin:menu:view")
     @GetMapping("index")
     public String index(Model model) {
         model.addAttribute("menus", menuService.getTreeTableMenu());
         return "admin/menu/index.html";
     }
 
+    @RequiresPermissions("admin:menu:edit")
     @GetMapping("addOrEdit")
     public String addOrEdit(Long id, Model model) {
         if(null != id) {
@@ -54,16 +58,20 @@ public class MenuController {
         return "admin/menu/addOrEdit.html";
     }
 
+    @RequiresPermissions("admin:menu:edit")
     @PostMapping("saveOrUpdate")
     @ResponseBody
     public JsonObject saveOrUpdate(@RequestBody Menu menu) {
-        try{
-            menuService.saveOrUpdate(menu);
-            return JsonObject.success("保存或更新菜单成功");
-        }catch (Exception e) {
-            e.printStackTrace();
-            return JsonObject.error("保存或更新菜单失败");
-        }
+        menuService.saveOrUpdate(menu);
+        return JsonObject.success("保存或更新菜单成功");
+    }
+
+    @RequiresPermissions("admin:menu:delete")
+    @PostMapping("delete")
+    @ResponseBody
+    public JsonObject delete(Long id) {
+        menuService.deleteById(id);
+        return JsonObject.success("删除菜单成功");
     }
 
     @PostMapping("fetchMenuTree")

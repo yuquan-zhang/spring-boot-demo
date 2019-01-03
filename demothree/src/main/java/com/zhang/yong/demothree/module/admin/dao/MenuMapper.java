@@ -17,6 +17,9 @@ public interface MenuMapper {
     @Select("select * from menu where id=#{id}")
     Menu selectById(Long id);
 
+    @Select("select * from menu where parent_id=#{parentId}")
+    List<Menu> selectByParentId(Long parentId);
+
     @Select("select * from menu where type=#{type}")
     List<Menu> selectByType(int type);
 
@@ -35,7 +38,13 @@ public interface MenuMapper {
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
     void insert(Menu menu);
 
-    @Update("update user set name=#{name},icon=#{icon},url=#{url},permission=#{permission}," +
+    @Update("update menu set name=#{name},icon=#{icon},url=#{url},permission=#{permission}," +
             "type=#{type},parent_id=#{parentId},can_show=#{canShow} where id=#{id}")
     void update(Menu menu);
+
+    @Delete("delete from menu where id=#{id}")
+    void delete(Long id);
+
+    @Delete("delete from role_menu where menu_id=#{menuId}")
+    void deleteRoleMenu(Long menuId);
 }

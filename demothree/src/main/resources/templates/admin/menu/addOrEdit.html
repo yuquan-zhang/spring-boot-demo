@@ -32,7 +32,7 @@
 
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="icon" name="icon" value="${menu.icon}"
-                               required="required" placeholder="请输入菜单图标">
+                                placeholder="请输入菜单图标">
                     </div>
                 </div>
                 <div class="form-group">
@@ -40,7 +40,7 @@
 
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="url" name="url" value="${menu.url}"
-                               required="required" placeholder="请输入菜单链接">
+                                placeholder="请输入菜单链接">
                     </div>
                 </div>
                 <div class="form-group">
@@ -48,23 +48,23 @@
 
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="permission" name="permission" value="${menu.permission}"
-                               required="required" placeholder="请输入按钮权限">
+                                placeholder="请输入按钮权限">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="type" class="col-sm-2 control-label">菜单类型</label>
 
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="type" name="type" value="${menu.type}"
-                               required="required" placeholder="请输入昵称">
+                    <div class="col-sm-9" id="type">
+                        <label class="radio-inline"><input type="radio" name="type" value="true" ${menu.type ? 'checked' : ''} >按钮</label>
+                        <label class="radio-inline"><input type="radio" name="type" value="false" ${menu.type ? '' : 'checked'}>菜单</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="canShow" class="col-sm-2 control-label">是否显示</label>
 
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="canShow" name="canShow" value="${menu.canShow}"
-                               required="required" placeholder="请输入昵称">
+                    <div class="col-sm-9" id="canShow">
+                        <label class="radio-inline"><input type="radio" name="canShow" value="true" ${menu.canShow ? '' : 'checked'} >是</label>
+                        <label class="radio-inline"><input type="radio" name="canShow" value="false" ${menu.canShow ? 'checked' : ''}>否</label>
                     </div>
                 </div>
             </div>
@@ -161,14 +161,14 @@
                     success: function (data) {
                         console.log(data);
                         if (data.success) {
-                            layer.alert(data.data, function (ind) {
+                            layer.alert(data.data,{icon: 1}, function (ind) {
                                 layer.close(ind);
                                 //关闭弹出层
                                 closeLayerIframe();
                                 window.parent.location.reload(true);
                             })
                         } else {
-                            layer.alert(data.data);
+                            layer.alert(data.data,{icon: 2});
                         }
                     }
                 });

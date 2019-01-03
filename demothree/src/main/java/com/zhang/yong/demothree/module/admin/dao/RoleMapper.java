@@ -23,6 +23,9 @@ public interface RoleMapper {
     @Select("select distinct r.name from role r right join user_role ur on r.id = ur.role_id where ur.user_id=#{userId}")
     Set<String> selectByUserId(Long userId);
 
+    @Select("select r.* from role r right join user_role ur on r.id = ur.role_id where ur.user_id=#{userId}")
+    List<Role> selectRolesByUserId(Long userId);
+
     @Insert("insert into role values(#{id},#{name})")
     @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
     void insert(Role role);

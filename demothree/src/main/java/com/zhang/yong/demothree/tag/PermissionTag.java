@@ -3,6 +3,7 @@ package com.zhang.yong.demothree.tag;
 import com.zhang.yong.demothree.ext.ShiroExt;
 import org.beetl.core.BodyContent;
 import org.beetl.core.Tag;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class PermissionTag extends Tag {
         Map<String,String> attrs = new HashMap<>();
         if(this.args.length >= 2) attrs = (Map<String, String>)args[1];
         String permissionKey = attrs.get("permissionKey");
-        if(permissionKey != null && !ShiroExt.getInstance().hasPermission(permissionKey)){
+        if(!StringUtils.isEmpty(permissionKey) && !ShiroExt.getInstance().hasPermission(permissionKey)){
             return;
         }
         subRender(attrs);

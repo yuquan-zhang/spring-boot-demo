@@ -28,8 +28,12 @@ public class RoleService {
         return roleMapper.selectByName(name);
     }
 
-    public Set<String> getRolesByUserId(Long userId) {
+    public Set<String> getRoleNamesByUserId(Long userId) {
         return roleMapper.selectByUserId(userId);
+    }
+
+    public List<Role> getRolesByUserId(Long userId) {
+        return roleMapper.selectRolesByUserId(userId);
     }
 
     @Transactional

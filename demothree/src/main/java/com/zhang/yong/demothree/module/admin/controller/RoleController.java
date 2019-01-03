@@ -49,13 +49,8 @@ public class RoleController {
     @PostMapping("saveOrUpdate")
     @ResponseBody
     public JsonObject saveOrUpdate(@RequestBody Role role) {
-        try{
-            roleService.saveOrUpdate(role);
-            return JsonObject.success("保存或更新角色成功");
-        }catch (Exception e) {
-            e.printStackTrace();
-            return JsonObject.error("保存或更新角色失败");
-        }
+        roleService.saveOrUpdate(role);
+        return JsonObject.success("保存或更新角色成功");
     }
 
     @PostMapping("checkNameUnique")

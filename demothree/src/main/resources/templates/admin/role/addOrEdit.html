@@ -125,13 +125,13 @@
                     success: function (data) {
                         console.log(data);
                         if (data.success) {
-                            layer.alert(data.data, function (ind) {
+                            layer.alert(data.data,{icon: 1}, function (ind) {
                                 layer.close(ind);
                                 //关闭弹出层
                                 closeLayerIframe();
                             })
                         } else {
-                            layer.alert(data.data);
+                            layer.alert(data.data,{icon: 2});
                         }
                     }
                 });

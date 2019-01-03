@@ -1,7 +1,6 @@
 package com.zhang.yong.demothree.security.exception;
 
-import com.zhang.yong.demothree.constant.Codes;
-import com.zhang.yong.demothree.vo.Json;
+import com.zhang.yong.demothree.vo.JsonObject;
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -26,50 +25,59 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Json handleException(Exception e) {
+    public JsonObject handleException(Exception e) {
         String eName = e.getClass().getSimpleName();
         log.error("执行出错：{}",eName);
-        return new Json(eName, false, Codes.SERVER_ERR, "系统异常", null);
+        e.printStackTrace();
+        return JsonObject.error("系统出现异常：" + e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(MessageException.class)
+    @ResponseBody
+    public JsonObject handleMessageException(MessageException e) {
+        String eName = e.getClass().getSimpleName();
+        log.error("业务流程执行出错：{}",eName);
+        e.printStackTrace();
+        return JsonObject.error(e.getLocalizedMessage());
     }
 
     @ExceptionHandler(ShiroException.class)
     @ResponseBody
-    public Json handleShiroException(ShiroException e) {
+    public JsonObject handleShiroException(ShiroException e) {
         String eName = e.getClass().getSimpleName();
         log.error("shiro执行出错：{}",eName);
-        return new Json(eName, false, Codes.SHIRO_ERR, "鉴权或授权过程出错", null);
+        e.printStackTrace();
+        return JsonObject.error("鉴权或授权过程出错");
     }
 
     @ExceptionHandler(UnauthenticatedException.class)
     @ResponseBody
-    public Json UnauthenticatedException(UnauthenticatedException e) {
+    public JsonObject UnauthenticatedException(UnauthenticatedException e) {
         e.printStackTrace();
         String eMsg = e.getMessage();
         if (StringUtils.startsWithIgnoreCase(eMsg,GUEST_ONLY)){
-            return new Json("401", false, Codes.UNAUTHEN, "只允许游客访问，若您已登录，请先退出登录", null)
-                    .data("detail",e.getMessage());
+            return JsonObject.error("只允许游客访问，若您已登录，请先退出登录");
         }else{
-            return new Json("401", false, Codes.UNAUTHEN, "用户未登录", null)
-                    .data("detail",e.getMessage());
+            return JsonObject.error("用户未登录");
         }
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseBody
-    public Json UnauthorizedException() {
-        return new Json("403", false, Codes.UNAUTHZ, "用户没有访问权限", null);
+    public JsonObject UnauthorizedException() {
+        return JsonObject.error("用户没有访问权限");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
-    public Json IllegalArgumentException() {
-        return new Json("400", false, Codes.ILLEGAL, "非法参数", null);
+    public JsonObject IllegalArgumentException() {
+        return JsonObject.error("非法参数");
     }
 
     @ExceptionHandler(NullPointerException.class)
     @ResponseBody
-    public Json NullPointerException() {
-        return new Json("400", false, Codes.ILLEGAL, "空指针", null);
+    public JsonObject NullPointerException() {
+        return JsonObject.error("空指针");
     }
 
 }

@@ -2,6 +2,7 @@ package com.zhang.yong.demothree.module.admin.service;
 
 import com.zhang.yong.demothree.module.admin.bean.User;
 import com.zhang.yong.demothree.module.admin.dao.UserMapper;
+import com.zhang.yong.demothree.util.CollectionUtil;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -46,6 +47,10 @@ public class UserService {
         }else{
             user.setUpdated(new Date());
             userMapper.update(user);
+            userMapper.deleteUserRoleByUserId(user.getId());
+        }
+        if(CollectionUtil.notEmpty(user.getRoleIds())) {
+            userMapper.insertUserRole(user.getId(),user.getRoleIds());
         }
     }
 

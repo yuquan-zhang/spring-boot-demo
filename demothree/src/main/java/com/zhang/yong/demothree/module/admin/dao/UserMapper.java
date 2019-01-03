@@ -30,4 +30,13 @@ public interface UserMapper {
 
     @Delete("delete from user where id=#{id}")
     void deleteUser(Long id);
+
+    @Insert("<script>insert into user_role(user_id,role_id) values " +
+            "<foreach item='item' collection='roleIds' separator=','> (#{userId},#{item})</foreach>" +
+            "</script>")
+    @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
+    void insertUserRole(@Param("userId") Long userId, @Param("roleIds") List<Long> roleIds);
+
+    @Delete("delete from user_role where user_id=#{userId}")
+    void deleteUserRoleByUserId(Long userId);
 }
